@@ -1,0 +1,54 @@
+﻿{
+  "ProviderId": "Microsoft.VisualStudio.ConnectedService.Wcf",
+  "Version": "15.0.40203.910",
+  "GettingStartedDocument": {
+    "Uri": "https://go.microsoft.com/fwlink/?linkid=858517"
+  },
+  "ExtendedData": {
+    "inputs": [
+      "https://efi.tax.gov.me/fs-v1/FiscalizationService.wsdl"
+    ],
+    "collectionTypes": [
+      "System.Array",
+      "System.Collections.Generic.Dictionary`2"
+    ],
+    "namespaceMappings": [
+      "*, FiscalReference"
+    ],
+    "references": [
+      "C:\\Users\\Milos Mijatovic\\source\\repos\\POS\\Shared\\bin\\Debug\\netstandard2.1\\Mono.Android.dll",
+      "Microsoft.Bcl.AsyncInterfaces, {Microsoft.Bcl.AsyncInterfaces, 5.0.0}",
+      "Microsoft.Data.Sqlite, {Microsoft.Data.Sqlite.Core, 5.0.11}",
+      "Microsoft.DotNet.PlatformAbstractions, {Microsoft.DotNet.PlatformAbstractions, 3.1.6}",
+      "Microsoft.EntityFrameworkCore, {Microsoft.EntityFrameworkCore, 5.0.11}",
+      "Microsoft.EntityFrameworkCore.Abstractions, {Microsoft.EntityFrameworkCore.Abstractions, 5.0.11}",
+      "Microsoft.EntityFrameworkCore.Relational, {Microsoft.EntityFrameworkCore.Relational, 5.0.11}",
+      "Microsoft.EntityFrameworkCore.Sqlite, {Microsoft.EntityFrameworkCore.Sqlite.Core, 5.0.11}",
+      "Microsoft.Extensions.Caching.Abstractions, {Microsoft.Extensions.Caching.Abstractions, 5.0.0}",
+      "Microsoft.Extensions.Caching.Memory, {Microsoft.Extensions.Caching.Memory, 5.0.0}",
+      "Microsoft.Extensions.Configuration.Abstractions, {Microsoft.Extensions.Configuration.Abstractions, 5.0.0}",
+      "Microsoft.Extensions.DependencyInjection, {Microsoft.Extensions.DependencyInjection, 5.0.2}",
+      "Microsoft.Extensions.DependencyInjection.Abstractions, {Microsoft.Extensions.DependencyInjection.Abstractions, 5.0.0}",
+      "Microsoft.Extensions.DependencyModel, {Microsoft.Extensions.DependencyModel, 5.0.0}",
+      "Microsoft.Extensions.Logging, {Microsoft.Extensions.Logging, 5.0.0}",
+      "Microsoft.Extensions.Logging.Abstractions, {Microsoft.Extensions.Logging.Abstractions, 5.0.0}",
+      "Microsoft.Extensions.Options, {Microsoft.Extensions.Options, 5.0.0}",
+      "Microsoft.Extensions.Primitives, {Microsoft.Extensions.Primitives, 5.0.0}",
+      "SQLitePCLRaw.batteries_v2, {SQLitePCLRaw.bundle_e_sqlite3, 2.0.4}",
+      "SQLitePCLRaw.core, {SQLitePCLRaw.core, 2.0.4}",
+      "SQLitePCLRaw.provider.e_sqlite3, {SQLitePCLRaw.provider.e_sqlite3, 2.0.4}",
+      "System.Buffers, {System.Buffers, 4.5.1}",
+      "System.Collections.Immutable, {System.Collections.Immutable, 5.0.0}",
+      "System.ComponentModel.Annotations, {System.ComponentModel.Annotations, 5.0.0}",
+      "System.Diagnostics.DiagnosticSource, {System.Diagnostics.DiagnosticSource, 5.0.1}",
+      "System.Memory, {System.Memory, 4.5.4}",
+      "System.Numerics.Vectors, {System.Numerics.Vectors, 4.5.0}",
+      "System.Runtime.CompilerServices.Unsafe, {System.Runtime.CompilerServices.Unsafe, 5.0.0}",
+      "System.Text.Encodings.Web, {System.Text.Encodings.Web, 5.0.0}",
+      "System.Text.Json, {System.Text.Json, 5.0.0}",
+      "System.Threading.Tasks.Extensions, {System.Threading.Tasks.Extensions, 4.5.4}"
+    ],
+    "targetFramework": "netstandard2.1",
+    "typeReuseMode": "All"
+  }
+}
