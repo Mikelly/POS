@@ -13,13 +13,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Shared
 {
-    public class Sync
+    public static class Sync
     {
         public static System.Globalization.CultureInfo culture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
         public static HttpClient client;
         public static HttpClientHandler handler;
 
         public static bool sync_pos = false;
+        public static bool sync_pos_invoices = false;
 
         #region Inner Classes
 
@@ -34,7 +35,7 @@ namespace Shared
 
         public class SyncModel
         {
-            public class SyncArtikal
+            public class SyncItem
             {
                 public int IdArtikal { get; set; }
                 public string Sifra { get; set; }
@@ -82,7 +83,7 @@ namespace Shared
             public byte[] cert_data { get; set; }
             public string cert_pass { get; set; }
 
-            public List<SyncArtikal> items { get; set; }
+            public List<SyncItem> items { get; set; }
             public List<SyncPartner> partners { get; set; }
             public List<SyncSetting> settings { get; set; }
             public List<SyncUser> users { get; set; }
@@ -119,6 +120,33 @@ namespace Shared
 
             public List<SyncItem> items = new List<SyncItem>();
             public List<SyncPayment> payments = new List<SyncPayment>();
+        }
+
+        public class SyncInvoiceResponse
+        {
+            public string IKOF { get; set; }
+            public string IKOF2 { get; set; }
+            public string JIKR { get; set; }
+            public string Error { get; set; }
+        }
+
+        public static SyncInvoice GetSyncInvoice(this Invoice doc, FiscalEntities db)
+        {            
+            var fr = db.FiscalRequests.Where(a => a.IKOF == doc.IKOF).FirstOrDefault();
+            SyncInvoice ret = new SyncInvoice();
+
+            ret.Broj = doc.Broj;
+            ret.Datum = doc.Datum;
+            ret.Kupac = doc.Partner;
+            ret.ENU = doc.ENU;            
+            ret.IKOF = doc.IKOF;
+            ret.OPER = doc.OPER;
+            ret.Request = Convert.ToBase64String(Encoding.UTF8.GetBytes(fr.Request));
+
+            ret.items = doc.InvoiceItems.Select(a => new SyncInvoice.SyncItem() { ItemId = a.ItemId, Discount = a.Discount, Price = a.Price, Quantity = a.Quantity, Tax = a.Tax, Total = a.FinalPrice, Unit = a.ItemUnit }).ToList();
+            ret.payments = doc.InvoicePayments.Select(a => new SyncInvoice.SyncPayment() { Type = a.Tip, Amount = a.Iznos }).ToList();
+
+            return ret;
         }
 
         #endregion
@@ -331,6 +359,112 @@ namespace Shared
             finally
             {
                 sync_pos = false;
+            }
+        }
+
+        public async static Task<bool> SyncPosInvoices(FiscalEntities db)
+        {   
+            try
+            {
+                sync_pos_invoices = true;                
+                var invoices = db.Invoices.Where(a => (a.Synced ?? "") != "Y").ToList();
+                int count = 0;
+                while (true)
+                {
+                    var batch = invoices.Skip(count * 10).Take(10).ToList();
+                    if (batch.Any() == false) break;
+                    var error = await SyncBatchInvoices(batch, db);
+                    count++;
+                }
+            }
+            finally
+            {
+                sync_pos_invoices = false;
+            }
+
+            return true;
+        }
+
+        public async static Task<string> SyncBatchInvoices(List<Invoice> docs, FiscalEntities db)
+        {
+            try
+            {
+                List<object> invoices = new List<object>();
+                foreach (var doc in docs)
+                {
+                    Invoice i = new Invoice();                    
+                    var sync_invoice = doc.GetSyncInvoice(db);
+                    invoices.Add(sync_invoice);
+                }
+
+                var ser = JsonConvert.SerializeObject(invoices);
+                var formContent = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("invoice", ser) });
+
+                var response = await HttpCallString($"/pos/frompos", formContent);
+                var sir = JsonConvert.DeserializeObject<List<SyncInvoiceResponse>>(response);
+
+                foreach (var r in sir.Where(a => a.Error == ""))
+                {
+                    var fr = db.FiscalRequests.SingleOrDefault(a => a.IKOF == r.IKOF);
+                    var d = db.Invoices.SingleOrDefault(a => a.IKOF == r.IKOF);
+
+                    if (d != null)
+                    {
+                        d.Synced = "Y";
+                    }
+                }
+
+                db.SaveChanges();
+
+                return "";
+            }
+            catch (Exception e)
+            {                
+                return e.Message;
+            }            
+        }
+
+        public async static Task<string> CreateItem(SyncModel.SyncItem item, FiscalEntities db)
+        {
+            try
+            {
+                var ser = JsonConvert.SerializeObject(item);
+                var formContent = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("item", ser) });
+
+                var response = await HttpCallString($"/pos/createitem", formContent);
+                var sitem = JsonConvert.DeserializeObject<SyncModel.SyncItem>(response);
+
+                var new_item = new Item() { IdArtikal = sitem.IdArtikal, Naziv = sitem.Naziv, Barcode = sitem.Barcode, Sifra = sitem.Sifra, JM = sitem.JM, FkPorez = sitem.FkPorez, Porez = sitem.Porez, Cijena = sitem.Cijena, Bundle = sitem.Bundle };
+                db.Items.Add(new_item);
+                db.SaveChanges();
+
+                return "";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public async static Task<string> CreatePartner(SyncModel.SyncPartner partner, FiscalEntities db)
+        {
+            try
+            {
+                var ser = JsonConvert.SerializeObject(partner);
+                var formContent = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("partner", ser) });
+
+                var response = await HttpCallString($"/pos/createitem", formContent);
+                var sprtn = JsonConvert.DeserializeObject<SyncModel.SyncPartner>(response);
+
+                var new_partner = new Partner() { IdPartner = sprtn.IdPartner, PIB = sprtn.PIB, Adresa = sprtn.Adresa, Naziv = sprtn.Naziv, Vrsta = sprtn.Vrsta };
+                db.Partners.Add(new_partner);
+                db.SaveChanges();
+
+                return "";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
             }
         }
 

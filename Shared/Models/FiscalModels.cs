@@ -18,6 +18,8 @@ namespace Shared.Models
         public string ENU { get; set; }
         public string IKOF { get; set; }
         public string JIKR { get; set; }
+        public string OPER { get; set; }
+        public string Synced { get; set; }
         public string Status { get; set; }
 
         public List<InvoiceItem> InvoiceItems { get; set; }
