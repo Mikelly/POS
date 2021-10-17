@@ -6,4 +6,11 @@
   This sample removes the method: android.support.v4.content.CursorLoader.loadInBackground:
   <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='CursorLoader']/method[@name='loadInBackground']" />
   -->
+
+  <attr path="/api/package[@name='com.nexgo.oaf.apiv3.device.pinpad']/interface[@name='OnPinPadInputListener']/method[@name='onInputResult']/parameter[@name='p0']" name="name">onInputResultp0</attr>
+  <attr path="/api/package[@name='com.nexgo.oaf.apiv3.device.pinpad']/interface[@name='OnPinPadInputListener']/method[@name='onInputResult']/parameter[@name='p1']" name="name">onInputResultp1</attr>
+  <attr path="/api/package[@name='net.sourceforge.zbar']/class[@name='SymbolIterator']/method[@name='next' and count(parameter)=0]" name="managedReturn">Java.Lang.Object</attr>
+  <attr path="/api/package[@name='com.nexgo.oaf.apiv3.device.pinpad']/interface[@name='OnPinPadInputListener']/method[@name='onSendKey']" name="managedName">onPinPadSendKey</attr>
+
+
 </metadata>

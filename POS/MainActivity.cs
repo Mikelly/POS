@@ -110,6 +110,12 @@ namespace POS
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+
+        public void Test()
+        {
+            var db = new Shared.Models.FiscalEntities();
+            var al = Com.Nexgo.Oaf.Apiv3.Device.Printer.AlignEnum.Center;
+        }
     }
 }
 

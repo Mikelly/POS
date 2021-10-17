@@ -124,6 +124,10 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NexGo\NexGo.csproj">
+      <Project>{a5dab89e-56b5-47fd-8ed1-81b8e8a85b99}</Project>
+      <Name>NexGo</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\Shared.csproj">
       <Project>{70b8c41a-fb38-4b14-96d6-2e8da9642e36}</Project>
       <Name>Shared</Name>
